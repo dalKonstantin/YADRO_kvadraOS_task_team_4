@@ -39,3 +39,15 @@ cmake --build build
 ```text
 ./build/media_scanner
 ```
+
+## Usage:
+
+```text
+./build/media_scanner -p /path/to/dir/ -i 5
+```
+### Cli arguments:
+| Argument | Description | Default |
+| -------- | ----------- | ------- |
+| `-p`     | path to directory being scanned| `~/`|
+| `-i`     | scan interval in seconds| 5 |
+
