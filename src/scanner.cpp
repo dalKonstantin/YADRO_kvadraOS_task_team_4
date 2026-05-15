@@ -20,12 +20,4 @@ void Scanner::scan_once(Files &files) {
       files.images.push_back(path.filename());
     }
   }
-
-  // for (const auto &entry : std::filesystem::recursive_directory_iterator(path)) {
-  //   if (std::filesystem::is_regular_file(entry) && entry.path().extension() == ".jpg") {
-  //     files.images.push_back(entry.path().filename());
-  //   } else if (std::filesystem::is_regular_file(entry) && entry.path().extension() == ".mp3") {
-  //     files.audio.push_back(entry.path().filename());
-  //   }
-  // }
 }
