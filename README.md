@@ -46,12 +46,24 @@ cmake --build build
 ## Usage:
 
 ```text
-./build/media_scanner -p /path/to/dir/ -i 5 -f
+./media_scanner [args]
 ```
 ### Cli arguments:
 | Argument | Description | Default |
 | -------- | ----------- | ------- |
-| `-p`     | path to directory being scanned| `~/`|
-| `-i`     | scan interval in seconds| 5 |
-| `-f`     | enables saveing to a file| false|
+| `-p <path>`     | Sets the directory to scan| `~/`|
+| `-i <seconds>`     | Sets the scan interval in seconds| 5 |
+| `-f`     | Saves the generated JSON to `.media_files`| false|
 
+
+## Example
+
+``` text
+./media_scanner -p ~/media -i 5 -f
+```
+
+The JSON is available at:
+
+``` text
+http://localhost:1234/media_files
+```
