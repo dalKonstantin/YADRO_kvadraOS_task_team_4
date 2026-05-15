@@ -38,7 +38,8 @@ int main(int argc, char **argv) {
   // Simple lock
   std::mutex files_mutex;
 
-  std::cout << "Scanning in: " << cli.path << "\tInterval: " << cli.interval << " s" << "\n";
+  std::cout << "starting scanning in: " << cli.path << "\tinterval: " << cli.interval << " s"
+            << "\n";
   while (is_running.load()) {
     {
       std::lock_guard<std::mutex> lock(files_mutex);
@@ -49,6 +50,7 @@ int main(int argc, char **argv) {
       if (cli.save_to_file) {
         std::ofstream out_file(cli.path / ".media_files", std::ios::out | std::ios::trunc);
         out_file << serializer.to_json();
+        std::cout << "file saved \n";
       }
     }
 
@@ -59,5 +61,5 @@ int main(int argc, char **argv) {
   }
 
   server.request_stop();
-  std::cout << "\nExiting..";
+  std::cout << "\nexiting..";
 }

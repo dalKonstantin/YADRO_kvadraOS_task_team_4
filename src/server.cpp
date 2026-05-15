@@ -1,5 +1,6 @@
 #include "server.h"
 #include "serializer.h"
+#include <iostream>
 #include <netinet/in.h>
 #include <sstream>
 #include <string>
@@ -57,7 +58,9 @@ void Server::run() {
       if (method == "GET" && path == "/media_files") {
         std::string json = serializer_.to_json();
         send_json(client_fd, json);
+        std::cout << "json sent \n";
       } else {
+        std::cout << "404 sent \n";
         send_not_found(client_fd);
       }
     }
