@@ -32,27 +32,17 @@ int main(int argc, char **argv) {
 
   std::cout << "Scanning in: " << cli.path << "\tInterval: " << cli.interval << " s" << "\n";
   while (is_running.load()) {
-    std::lock_guard<std::mutex> lock(files_mutex);
+    {
+      std::lock_guard<std::mutex> lock(files_mutex);
 
-    files.clear();
-    scanner.scan_once(files);
+      files.clear();
+      scanner.scan_once(files);
 
-    std::ofstream out_file(cli.path / ".media_files", std::ios::out | std::ios::trunc);
-    out_file << serializer.to_json();
+      std::ofstream out_file(cli.path / ".media_files", std::ios::out | std::ios::trunc);
+      out_file << serializer.to_json();
+    }
     std::this_thread::sleep_for(std::chrono::seconds(cli.interval));
   }
-  // while (is_running.load()) {
-  //   scanner.scan_once(files);
-
-  //   {
-  //     std::ofstream out_file(cli.path.string() + "/" + ".media_files",
-  //                            std::ios::out | std::ios::trunc);
-  //     out_file << serializer.to_json();
-  //   }
-  //   std::cout << "Succesfully scaned: " << cli.path.string() << "\n";
-  //   files.clear();
-  //   std::this_thread::sleep_for(std::chrono::seconds(cli.interval));
-  // }
 
   std::cout << "\nExiting..";
 }

@@ -18,4 +18,5 @@ private:
   std::thread server_thread_;
 
   void send_json(int client_fd, const std::string json);
+  void send_not_found(int client_fd);
 };

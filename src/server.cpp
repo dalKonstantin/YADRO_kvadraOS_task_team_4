@@ -1,6 +1,8 @@
 #include "server.h"
 #include "serializer.h"
 #include <netinet/in.h>
+#include <sstream>
+#include <string>
 #include <sys/socket.h>
 #include <thread>
 #include <unistd.h>
@@ -36,10 +38,23 @@ void Server::run() {
         continue;
       }
       char buffer[4096];
-      recv(client_fd, buffer, sizeof(buffer), 0);
+      ssize_t bytes_read = recv(client_fd, buffer, sizeof(buffer), 0);
 
-      std::string json = serializer_.to_json();
-      send_json(client_fd, json);
+      std::string request(buffer, bytes_read);
+      std::istringstream iss(request);
+
+      std::string method;
+      std::string path;
+      std::string version;
+
+      iss >> method >> path >> version;
+
+      if (method == "GET" && path == "/media_files") {
+        std::string json = serializer_.to_json();
+        send_json(client_fd, json);
+      } else {
+        send_not_found(client_fd);
+      }
     }
   });
 }
@@ -67,6 +82,22 @@ void Server::send_json(int client_fd, const std::string json) {
                          "Connection: close\r\n"
                          "\r\n" +
                          json;
+
+  send(client_fd, response.c_str(), response.size(), 0);
+  close(client_fd);
+}
+
+void Server::send_not_found(int client_fd) {
+  std::string body = "Not Found\n";
+
+  std::string response = "HTTP/1.1 404 Not Found\r\n"
+                         "Content-Type: text/plain\r\n"
+                         "Content-Length: " +
+                         std::to_string(body.size()) +
+                         "\r\n"
+                         "Connection: close\r\n"
+                         "\r\n" +
+                         body;
 
   send(client_fd, response.c_str(), response.size(), 0);
   close(client_fd);
