@@ -1,6 +1,7 @@
 #pragma once
 #include "serializer.h"
 #include <atomic>
+#include <mutex>
 #include <sys/socket.h>
 #include <thread>
 
@@ -9,7 +10,7 @@
  */
 class Server {
 public:
-  Server(int port, Serializer &serializer);
+  Server(int port, Serializer &serializer, std::mutex &files_mutex);
 
   void run();
   void request_stop();
@@ -17,6 +18,7 @@ public:
 
 private:
   Serializer &serializer_;
+  std::mutex &files_mutex_;
   int server_fd_;
   std::atomic<bool> is_running_;
   std::thread server_thread_;

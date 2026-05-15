@@ -1,6 +1,7 @@
 #include "server.h"
 #include "serializer.h"
 #include <iostream>
+#include <mutex>
 #include <netinet/in.h>
 #include <sstream>
 #include <string>
@@ -8,8 +9,8 @@
 #include <thread>
 #include <unistd.h>
 
-Server::Server(int port, Serializer &serializer)
-    : serializer_(serializer), server_fd_(-1), is_running_(false) {
+Server::Server(int port, Serializer &serializer, std::mutex &files_mutex)
+    : serializer_(serializer), server_fd_(-1), is_running_(false), files_mutex_(files_mutex) {
 
   // Create socket
   server_fd_ = socket(AF_INET, SOCK_STREAM, 0);
@@ -56,7 +57,11 @@ void Server::run() {
       iss >> method >> path >> version;
 
       if (method == "GET" && path == "/media_files") {
-        std::string json = serializer_.to_json();
+        std::string json;
+        {
+          std::lock_guard<std::mutex> lock(files_mutex_);
+          json = serializer_.to_json();
+        }
         send_json(client_fd, json);
         std::cout << "json sent \n";
       } else {

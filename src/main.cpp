@@ -31,12 +31,13 @@ int main(int argc, char **argv) {
   Files files;
   Scanner scanner(cli.path);
   Serializer serializer(files);
-  Server server(1234, serializer);
 
+  std::mutex files_mutex;
+
+  Server server(1234, serializer, files_mutex);
   server.run();
 
   // Simple lock
-  std::mutex files_mutex;
 
   std::cout << "starting scanning in: " << cli.path << "\tinterval: " << cli.interval << " s"
             << "\n";
