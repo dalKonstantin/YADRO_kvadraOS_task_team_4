@@ -40,6 +40,11 @@ void Server::run() {
       char buffer[4096];
       ssize_t bytes_read = recv(client_fd, buffer, sizeof(buffer), 0);
 
+      if (bytes_read <= 0) {
+        close(client_fd);
+        continue;
+      }
+
       std::string request(buffer, bytes_read);
       std::istringstream iss(request);
 
@@ -61,7 +66,9 @@ void Server::run() {
 
 void Server::request_stop() {
   is_running_.store(false);
+
   if (server_fd_ != -1) {
+    shutdown(server_fd_, SHUT_RDWR);
     close(server_fd_);
     server_fd_ = -1;
   }

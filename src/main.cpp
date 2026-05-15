@@ -1,10 +1,12 @@
 #include <atomic>
 #include <chrono>
+#include <condition_variable>
 #include <csignal>
 #include <fstream>
 #include <ios>
 #include <iostream>
 #include <mutex>
+#include <sys/socket.h>
 #include <thread>
 
 #include "cli.h"
@@ -14,8 +16,13 @@
 #include "server.h"
 
 std::atomic<bool> is_running = true;
+std::mutex shutdown_mutex;
 
-void signal_handler(int signum) { is_running.store(false); }
+std::condition_variable shutdown_cv;
+void signal_handler(int signum) {
+  is_running.store(false);
+  shutdown_cv.notify_all();
+}
 
 int main(int argc, char **argv) {
   std::signal(SIGINT, signal_handler);
@@ -27,8 +34,10 @@ int main(int argc, char **argv) {
   Serializer serializer(files);
   Server server(1234, serializer);
 
-  std::mutex files_mutex;
   server.run();
+
+  // Simple lock
+  std::mutex files_mutex;
 
   std::cout << "Scanning in: " << cli.path << "\tInterval: " << cli.interval << " s" << "\n";
   while (is_running.load()) {
@@ -41,8 +50,13 @@ int main(int argc, char **argv) {
       std::ofstream out_file(cli.path / ".media_files", std::ios::out | std::ios::trunc);
       out_file << serializer.to_json();
     }
-    std::this_thread::sleep_for(std::chrono::seconds(cli.interval));
+
+    std::unique_lock<std::mutex> lock(shutdown_mutex);
+
+    shutdown_cv.wait_for(lock, std::chrono::seconds(cli.interval),
+                         []() { return !is_running.load(); });
   }
 
+  server.request_stop();
   std::cout << "\nExiting..";
 }
