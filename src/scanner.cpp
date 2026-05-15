@@ -3,6 +3,9 @@
 
 #include <filesystem>
 
+/*
+ * Method that recursively scans a directory
+ */
 void Scanner::scan_once(Files &files) {
 
   for (const auto &entry : std::filesystem::recursive_directory_iterator(path_)) {

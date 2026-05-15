@@ -13,6 +13,11 @@ Cli::Cli(int argc, char **argv) {
   }
   for (int i = 1; i < argc; ++i) {
     std::string arg = argv[i];
+    /*
+     * -i - scan interval in seconds
+     * -p - path to directory being scanned
+     * -f - save to file or not?
+     */
     if (arg == "-i" && i + 1 < argc) {
       interval = std::stoi(argv[++i]);
     } else if (arg == "-p" && i + 1 < argc) {

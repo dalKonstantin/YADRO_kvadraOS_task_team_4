@@ -3,6 +3,9 @@
 #include "files.h"
 #include <string>
 
+/*
+ * Class that serializes data to json
+ */
 class Serializer {
 public:
   Serializer(Files &files) : source_(files) {};

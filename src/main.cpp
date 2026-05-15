@@ -7,7 +7,6 @@
 #include <iostream>
 #include <mutex>
 #include <sys/socket.h>
-#include <thread>
 
 #include "cli.h"
 #include "files.h"

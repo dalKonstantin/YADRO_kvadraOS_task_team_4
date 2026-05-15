@@ -3,6 +3,10 @@
 #include <atomic>
 #include <sys/socket.h>
 #include <thread>
+
+/*
+ * Simple HTTP server
+ */
 class Server {
 public:
   Server(int port, Serializer &serializer);
