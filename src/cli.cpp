@@ -18,6 +18,8 @@ Cli::Cli(int argc, char **argv) {
     } else if (arg == "-p" && i + 1 < argc) {
       path = std::filesystem::absolute(argv[++i]);
       std::cout << path << "\n";
+    } else if (arg == "-f") {
+      save_to_file = true;
     }
   }
 }

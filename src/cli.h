@@ -6,4 +6,5 @@ struct Cli {
 
   std::filesystem::path path;
   int interval = 5;
+  bool save_to_file = false;
 };

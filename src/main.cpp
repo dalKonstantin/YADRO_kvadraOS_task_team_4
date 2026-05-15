@@ -47,8 +47,10 @@ int main(int argc, char **argv) {
       files.clear();
       scanner.scan_once(files);
 
-      std::ofstream out_file(cli.path / ".media_files", std::ios::out | std::ios::trunc);
-      out_file << serializer.to_json();
+      if (cli.save_to_file) {
+        std::ofstream out_file(cli.path / ".media_files", std::ios::out | std::ios::trunc);
+        out_file << serializer.to_json();
+      }
     }
 
     std::unique_lock<std::mutex> lock(shutdown_mutex);
