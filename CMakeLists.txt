@@ -13,5 +13,6 @@ add_executable(${PROJECT_NAME}
     src/scanner.cpp
     src/serializer.cpp
     src/cli.cpp
+    src/server.cpp
 )
 
