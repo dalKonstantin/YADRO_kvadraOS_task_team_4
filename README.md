@@ -25,6 +25,10 @@ A small C++ Linux application that periodically scans a directory for multimedia
 
 By default scans the users home director. The scan path and interval can be configured with cmd args. The generated json can alse be saved to ".media_files".
 
+The optional requirements are covered:
+1. Scan interval and directory path are configurable at startup (-i, -p).
+2. The resulting JSON is available over HTTP at http://localhost:1234/media_files via a GET request, file output can be enabled with -f when needed.
+
 ## Requirements
 - C++ 17 or higher
 - CMake 3.10
@@ -46,12 +50,24 @@ cmake --build build
 ## Usage:
 
 ```text
-./build/media_scanner -p /path/to/dir/ -i 5 -f
+./media_scanner [args]
 ```
 ### Cli arguments:
 | Argument | Description | Default |
 | -------- | ----------- | ------- |
-| `-p`     | path to directory being scanned| `~/`|
-| `-i`     | scan interval in seconds| 5 |
-| `-f`     | enables saveing to a file| false|
+| `-p <path>`     | Sets the directory to scan| `~/`|
+| `-i <seconds>`     | Sets the scan interval in seconds| 5 |
+| `-f`     | Saves the generated JSON to `.media_files`| false|
 
+
+## Example
+
+``` text
+./media_scanner -p ~/media -i 5 -f
+```
+
+The JSON is available at:
+
+``` text
+http://localhost:1234/media_files
+```
